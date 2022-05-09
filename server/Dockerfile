@@ -1,8 +1,10 @@
-FROM alpine:3.10.1
+FROM alpine:3.15.4
 RUN apk --no-cache add openssl gettext
 
-COPY src /src
+COPY server/src /src
+COPY ca/out /ca
 WORKDIR /src
+
 RUN chmod +x ./gen.sh
 
 RUN mkdir -p demoCA/newcerts

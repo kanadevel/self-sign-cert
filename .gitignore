@@ -1,2 +1,5 @@
-/out
+/ca/out
+/server/out
+
 .idea
+.DS_Store
