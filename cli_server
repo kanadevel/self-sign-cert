@@ -1,0 +1,10 @@
+#!/bin/sh
+
+
+cd `dirname $0`
+
+docker build --tag self-sign-cert-server -f server/Dockerfile .
+docker run --rm -v $PWD/server/out:/out -e HOST=$1 -e IP=$2 self-sign-cert-server
+
+
+exit 0

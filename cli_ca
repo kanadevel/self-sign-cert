@@ -1,0 +1,10 @@
+#!/bin/sh
+
+
+cd `dirname $0`
+
+docker build --tag self-sign-cert-ca -f ca/Dockerfile .
+docker run --rm -v $PWD/ca/out:/out -e CANAME=$1 self-sign-cert-ca
+
+
+exit 0
