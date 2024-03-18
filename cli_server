@@ -3,8 +3,13 @@
 
 cd `dirname $0`
 
-docker build --tag self-sign-cert-server -f server/Dockerfile .
-docker run --rm -v $PWD/server/out:/out -e HOST=$1 -e IP=$2 self-sign-cert-server
+
+docker build --tag self-sign-cert-server -f server/Dockerfile . \
+  --build-arg USER_UID="$(id -u)" \
+  --build-arg USER_GID="$(id -g)" \
+  --build-arg USER_NAME="$USER"
+
+docker run --rm -u `id -u`:`id -g` -v $PWD/server/out:/out -e HOST=$1 -e IP=$2 self-sign-cert-server
 
 
 exit 0

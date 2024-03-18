@@ -3,8 +3,13 @@
 
 cd `dirname $0`
 
-docker build --tag self-sign-cert-ca -f ca/Dockerfile .
-docker run --rm -v $PWD/ca/out:/out -e CANAME=$1 self-sign-cert-ca
+
+docker build --tag self-sign-cert-ca -f ca/Dockerfile . \
+  --build-arg USER_UID="$(id -u)" \
+  --build-arg USER_GID="$(id -g)" \
+  --build-arg USER_NAME="$USER"
+
+docker run --rm -u `id -u`:`id -g` -v $PWD/ca/out:/out -e CANAME=$1 self-sign-cert-ca
 
 
 exit 0
