@@ -1,1 +1,6 @@
-subjectAltName = DNS:${HOST}, IP:${IP}
+basicConstraints = critical,CA:FALSE
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = DNS:${HOST},IP:${IP}
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer

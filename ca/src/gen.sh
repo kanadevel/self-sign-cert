@@ -1,17 +1,49 @@
 #!/bin/sh
 
+set -eu
+
+: "${CANAME:?CANAME is required}"
+
 echo "ca name: $CANAME"
 
-# Generate private key for CA and Server.
-openssl genrsa 2048 > /out/ca.key
+umask 077
 
-# Generate certificate sigining requests from same key.
-openssl req -new -key /out/ca.key -subj "/C=AU/ST=Some-State/O=${CANAME}/CN=${CANAME}" > /out/ca.csr
+SERIAL="$(openssl rand -hex 16)"
 
-# Generate CA certificate.
-openssl ca -batch -extensions v3_ca -out /out/ca.crt -in /out/ca.csr -selfsign -keyfile /out/ca.key
+cat > ca.conf <<EOF
+[req]
+prompt = no
+distinguished_name = dn
+x509_extensions = v3_ca
+
+[dn]
+C = JP
+ST = Tokyo
+O = ${CANAME}
+CN = ${CANAME}
+
+[v3_ca]
+basicConstraints = critical,CA:TRUE,pathlen:0
+keyUsage = critical,keyCertSign,cRLSign
+subjectKeyIdentifier = hash
+EOF
+
+openssl req \
+  -x509 \
+  -newkey rsa:2048 \
+  -nodes \
+  -sha256 \
+  -days 3650 \
+  -set_serial "0x${SERIAL}" \
+  -keyout /out/ca.key \
+  -out /out/ca.crt \
+  -config ca.conf
+
+cp -p /out/ca.crt /out/ca.pem
+
+chmod 644 /out/ca.crt /out/ca.pem
+chmod 600 /out/ca.key
 
 
-openssl x509 -in /out/ca.crt -out /out/tmp.der -outform DER
-openssl x509 -in /out/tmp.der -inform DER -out /out/ca.pem -outform pem
-rm /out/tmp.der
+echo "ca serial: 0x${SERIAL}"
+

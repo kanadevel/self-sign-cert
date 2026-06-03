@@ -5,8 +5,8 @@ ARG USER_GID
 ARG USER_NAME
 
 
-ENV CA_DIR /ca
-ENV SRC_DIR /src
+ENV CA_DIR=/ca
+ENV SRC_DIR=/src
 
 
 RUN apk --no-cache add openssl gettext shadow
@@ -42,12 +42,6 @@ RUN chmod +x ./gen.sh
 
 
 USER $USER_NAME
-
-
-RUN mkdir -p demoCA/newcerts
-RUN echo 00 > demoCA/serial
-RUN touch demoCA/index.txt
-RUN mkdir -p demoCA/newcerts
 
 
 CMD ["./gen.sh"]
